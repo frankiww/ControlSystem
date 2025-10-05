@@ -48,13 +48,14 @@ exports.updateDefect = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
+    const userId = req.userId;
 
     const defect = await Defect.findByPk(id);
     if (!defect) {
       return res.status(404).json({ error: 'Дефект не найден' });
     }
 
-    await defect.update(updateData);
+    await defect.update(updateData, {userId});
     res.status(200).json(defect);
   } catch (error) {
     console.error(error);
