@@ -49,7 +49,7 @@ Report.belongsTo(User, { foreignKey: 'user' });
 User.hasMany(Object, { foreignKey: 'client', onDelete: 'RESTRICT' });
 Object.belongsTo(User, { foreignKey: 'client' });
 
-MediaSourceHandle.exports = {
+module.exports = {
     Account, Attachment, Comment,
     Defect, History, Object,
     Report, Role, Status, User
