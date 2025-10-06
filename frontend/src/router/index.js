@@ -50,7 +50,10 @@ router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token')
     if (to.meta.requiresAuth && !token) {
         next('/login')
-    } else {
+    } else if (to.path === '/login' && token) {
+    next('/profile')
+    }
+    else {
         next()
     }
 });

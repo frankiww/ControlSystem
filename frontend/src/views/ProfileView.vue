@@ -10,7 +10,7 @@
 
       <button
         @click="logout"
-        class="w-full bg-medium text-white py-2 rounded-lg hover:bg-dark transition-colors"
+        class="w-full bg-medium text-light py-2 rounded-lg hover:bg-dark transition-colors"
       >
         Выйти
       </button>
