@@ -2,6 +2,7 @@ const express = require('express');
 const sequelize = require('./config/database');
 require('./models/index');
 
+const authRoutes = require('./routes/authRoutes');
 const attachmentRoutes = require('./routes/attachmentRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const defectRoutes = require('./routes/defectRoutes');
@@ -15,6 +16,7 @@ const userRoutes = require('./routes/userRoutes');
 const app = express();
 app.use(express.json());
 
+app.use('/api/auth', authRoutes);
 app.use('/api/attachments', attachmentRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/defects', defectRoutes);

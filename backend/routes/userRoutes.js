@@ -6,6 +6,4 @@ router.post('/', userController.addUser);
 
 router.patch('/:id/deactivate', userController.deactivateUser);
 
-router.post('/', userController.login);
-
 module.exports = router;

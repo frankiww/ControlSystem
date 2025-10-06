@@ -32,38 +32,6 @@ exports.addUser = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
-  try {
-    const { login, password } = req.body;
-
-    const account = await Account.findOne({ where: { login } });
-    if (!account) {
-      return res.status(404).json({ error: 'Аккаунт не найден' });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, account.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Неверный пароль' });
-    }
-
-    const user = await User.findByPk(account.user, {
-      include: { model: Role, attributes: ['name'] }
-    });
-
-    res.status(200).json({
-      message: 'Авторизация успешна',
-      user: {
-        id: user.id,
-        name: user.name,
-        role: user.Role.name
-      }
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Ошибка при авторизации' });
-  }
-};
-
 exports.deactivateUser = async (req, res) => {
   try {
     const { id } = req.params;
