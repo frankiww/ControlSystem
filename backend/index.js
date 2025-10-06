@@ -1,5 +1,6 @@
 const express = require('express');
 const sequelize = require('./config/database');
+const cors = require('cors')
 require('./models/index');
 
 const authRoutes = require('./routes/authRoutes');
@@ -15,6 +16,7 @@ const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 app.use(express.json());
+app.use(cors())
 
 app.use('/api/auth', authRoutes);
 app.use('/api/attachments', attachmentRoutes);
@@ -32,5 +34,3 @@ app.listen(port, async() =>{
     console.log(`http://localhost:${port}`);
     await sequelize.sync({alter: true});
 })
-
-
