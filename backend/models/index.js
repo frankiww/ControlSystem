@@ -47,7 +47,7 @@ User.hasMany(Report, { foreignKey: 'user', onDelete: 'CASCADE' });
 Report.belongsTo(User, { foreignKey: 'user' });
 
 User.hasMany(Object, { foreignKey: 'client', onDelete: 'RESTRICT' });
-Object.belongsTo(User, { foreignKey: 'client' });
+Object.belongsTo(User, { foreignKey: 'client', as: 'clientInfo' });
 
 module.exports = {
     Account, Attachment, Comment,

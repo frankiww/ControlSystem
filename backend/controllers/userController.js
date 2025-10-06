@@ -1,5 +1,56 @@
 const bcrypt = require('bcrypt');
-const { User, Account, Role } = require('../models');
+const { User, Account, Role, Object } = require('../models');
+const { Op } = require('sequelize');
+
+exports.getUsers = async (req, res) => {
+  try {
+    const requester = req.user;
+    const { role } = req.query;
+
+    const include = [{ model: Role, attributes: ['name'] }];
+
+    if (role) {
+      include[0].where = { name: role };
+    }
+
+    if (requester.role === 'manager') {
+      const users = await User.findAll({ include });
+      return res.status(200).json(users);
+    }
+
+    if (requester.role === 'engineer') {
+      const defects = await Defect.findAll({
+        where: { contractor: requester.id },
+        attributes: [],
+        include: [
+          {
+            model: Object,
+            attributes: ['client'],
+          }
+        ]
+      });
+
+      const clientIds = [...new Set(defects.map(d => d.Object.client))];
+
+      const users = await User.findAll({
+        where: { id: { [Op.in]: clientIds } },
+        include: { model: Role, attributes: ['name'] },
+      });
+
+      return res.status(200).json(users);
+    }
+
+    if (requester.role === 'client') {
+      const user = await User.findByPk(requester.id, { include });
+      return res.status(200).json([user]);
+    }
+
+    res.status(403).json({ error: 'Нет доступа' });
+  } catch (error) {
+    console.error('Ошибка при получении пользователей:', error);
+    res.status(500).json({ error: 'Ошибка при получении пользователей' });
+  }
+};
 
 exports.addUser = async (req, res) => {
   try {
