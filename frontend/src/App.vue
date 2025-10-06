@@ -2,11 +2,13 @@
 <!-- 8D99AE -->
 <!-- EDF2F4 -->
 
-<script>
+<script setup>
+import Navbar from './components/Navbar.vue';
 </script>
 
 <template>
   <div id="app">
+    <Navbar v-if="$route.path !== '/login'" />
     <router-view />
   </div>
 </template>
