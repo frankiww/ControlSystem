@@ -4,9 +4,9 @@
       <h1 class="text-2xl font-bold mb-4 border-b border-dark pb-2">{{ object.name }}</h1>
 
       <div class="bg-white p-4 rounded shadow mb-6 flex flex-col sm:flex-row justify-between gap-4">
-        <div>Клиент: {{ object.clientInfo?.name }}</div>
-        <div>Активные дефекты: {{ object.activeDefects }}</div>
-        <div>Всего дефектов: {{ object.totalDefects }}</div>
+        <div><strong>Клиент: </strong>{{ object.clientInfo?.name }}</div>
+        <div><strong>Активные дефекты: </strong>{{ object.activeDefects }}</div>
+        <div><strong>Всего дефектов: </strong>{{ object.totalDefects }}</div>
       </div>
 
       <div v-if="defects.length > 0">

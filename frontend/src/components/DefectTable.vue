@@ -6,6 +6,7 @@
           <th class="py-3 px-4 border-b border-dark">Название</th>
           <th class="py-3 px-4 border-b border-dark">Статус</th>
           <th class="py-3 px-4 border-b border-dark">Исполнитель</th>
+          <th class="py-3 px-4 border-b border-dark">Объект</th>
           <th class="py-3 px-4 border-b border-dark">Дедлайн</th>
           <th class="py-3 px-4 border-b border-dark">Приоритет</th>
         </tr>
@@ -20,6 +21,7 @@
           <td class="py-2 px-4 border-b border-dark">{{ defect.name }}</td>
           <td class="py-2 px-4 border-b border-dark">{{ defect.statusName }}</td>
           <td class="py-2 px-4 border-b border-dark">{{ defect.engineerName || '-' }}</td>
+          <td class="py-2 px-4 border-b border-dark">{{ defect.objectName || '-' }}</td>
           <td class="py-2 px-4 border-b border-dark">{{ formatDate(defect.deadline)}}</td>
           <td class="py-2 px-4 border-b border-dark">{{ defect.priority }}</td>
         </tr>

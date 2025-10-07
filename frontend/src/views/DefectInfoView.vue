@@ -4,11 +4,15 @@
 
     <div class="bg-white p-4 rounded shadow mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div><strong>Описание:</strong> {{ defect.description || '-' }}</div>
-      <div><strong>Приоритет:</strong> {{ defect.priority || '-' }}</div>
+      <div><strong>Создан:</strong> {{ formatDate(defect.createdAt) }}</div>
       <div><strong>Инженер:</strong> {{ defect.engineerName || '-' }}</div>
       <div><strong>Дедлайн:</strong> {{ formatDate(defect.deadline) || '-' }}</div>
       <div><strong>Статус:</strong> {{ defect.statusName || '-' }}</div>
       <div><strong>Клиент:</strong> {{ defect.objectInfo.clientInfo?.name || '-' }}</div>
+      <div><strong>Приоритет:</strong> {{ defect.priority || '-' }}</div>
+      <div><strong>Объект:</strong> {{ defect.objectInfo.name || '-' }}</div>
+
+
     </div>
 
     <!-- вкладки -->

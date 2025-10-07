@@ -21,6 +21,22 @@
         </option>
       </select>
 
+
+      <select
+        v-model="selectedObject"
+        @change="fetchDefects"
+        class="border border-dark rounded px-3 py-2 w-full sm:w-1/3 focus:outline-none focus:ring-2 focus:ring-medium"
+      >
+        <option value="">Все объекты</option>
+        <option
+          v-for="object in objects"
+          :key="object.id"
+          :value="object.id"
+        >
+          {{ object.name }}
+        </option>
+      </select>
+
       <button
         v-if="userRole === 'manager'"
         class="bg-medium text-light px-4 py-2 rounded hover:bg-dark transition sm:ml-auto"
@@ -43,7 +59,9 @@ const router = useRouter()
 
 const defects = ref([])
 const statuses = ref([])
+const objects = ref([])
 const selectedStatus = ref('')
+const selectedObject = ref('')
 
 const user = JSON.parse(localStorage.getItem('user'))
 const userRole = user?.role || ''
@@ -55,6 +73,7 @@ async function fetchDefects() {
       headers: { Authorization: `Bearer ${token}` },
       params: {
         status: selectedStatus.value || '',
+        object: selectedObject.value || '',
       }
     })
     defects.value = response.data
@@ -71,7 +90,19 @@ async function fetchStatuses() {
     })
     statuses.value = res.data
   } catch (err) {
-    console.error('Ошибка загрузки клиентов:', err)
+    console.error('Ошибка загрузки статусов:', err)
+  }
+}
+
+async function fetchObjects() {
+  try {
+    const token = localStorage.getItem('token')
+    const res = await axios.get('http://localhost:3030/api/objects', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    objects.value = res.data
+  } catch (err) {
+    console.error('Ошибка загрузки объектов:', err)
   }
 }
 
@@ -86,5 +117,6 @@ function openAddDefectModal() {
 onMounted(() => {
   fetchDefects()
   fetchStatuses()
+  fetchObjects()
 })
 </script>

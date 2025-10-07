@@ -111,7 +111,8 @@ exports.getDefectById = async (req, res) => {
       statusName: defect.statusInfo?.name,
       clientInfo: defect.clientInfo,
       deadline: defect.deadline,
-      objectInfo: defect.objectInfo
+      objectInfo: defect.objectInfo,
+      createdAt: defect.createdAt
     })
   } catch (err) {
     console.error(err)
