@@ -26,6 +26,7 @@ exports.getAllDefects = async (req, res) => {
 include: [
         {
           model: Status,
+          as: 'statusInfo',
           attributes: ['name'],
         },
         {
@@ -36,6 +37,7 @@ include: [
         {
           model: Object,
           attributes: ['id', 'name'],
+          as: 'objectInfo',
           include: [
             {
               model: User,
@@ -51,10 +53,10 @@ include: [
     const formattedDefects = defects.map(d => ({
       id: d.id,
       name: d.name,
-      statusName: d.Status?.name || '-',
+      statusName: d.statusInfo?.name || '-',
       engineerName: d.engineerInfo?.name || '-',
       deadline: d.deadline,
-      objectName: d.Object?.name || '-',
+      objectName: d.objectInfo?.name || '-',
       clientName: d.Object?.clientInfo?.name || '-',
       priority: d.priority,
     }));
@@ -66,21 +68,56 @@ include: [
   }
 };
 
+
 exports.getDefectById = async (req, res) => {
+  const defectId = req.params.id
   try {
-    const { id } = req.params;
-    const defect = await Defect.findByPk(id);
+    const defect = await Defect.findOne({
+      where: { id: defectId },
+      include: [
+        {
+          model: User,
+          as: 'engineerInfo',
+          attributes: ['id', 'name']
+        },
+        {
+          model: Status,
+          as: 'statusInfo',
+          attributes: ['id', 'name']
+        },
+        {
+          model: Object,
+          attributes: ['id', 'name'],
+          as: 'objectInfo',
+          include: [
+            {
+              model: User,
+              as: 'clientInfo',
+              attributes: ['id', 'name'],
+            },
+          ],
+        },
+      ]
+    })
 
-    if (!defect) {
-      return res.status(404).json({ error: 'Дефект не найден' });
-    }
+    if (!defect) return res.status(404).json({ error: 'Дефект не найден' })
 
-    res.status(200).json(defect);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Ошибка при получении дефекта' });
+    res.json({
+      id: defect.id,
+      name: defect.name,
+      description: defect.description,
+      priority: defect.priority,
+      engineerName: defect.engineerInfo?.name,
+      statusName: defect.statusInfo?.name,
+      clientInfo: defect.clientInfo,
+      deadline: defect.deadline,
+      objectInfo: defect.objectInfo
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Ошибка получения дефекта' })
   }
-};
+}
 
 exports.createDefect = async (req, res) => {
   try {

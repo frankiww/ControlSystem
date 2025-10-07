@@ -58,8 +58,8 @@ async function fetchDefects() {
   }
 }
 
-function openDefect(defect) {
-//   router.push({ name: 'DefectView', params: { defect } })
+function openDefect(id) {
+  router.push({ name: 'DefectInfoView', params: { id } })
 }
 
 onMounted(async () => {

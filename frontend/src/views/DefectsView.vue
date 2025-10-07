@@ -75,6 +75,10 @@ async function fetchStatuses() {
   }
 }
 
+function openDefect(id) {
+  router.push({ name: 'DefectInfoView', params: { id } })
+}
+
 function openAddDefectModal() {
   //добавить дефект
 }

@@ -5,7 +5,7 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 
 router.get('/', authMiddleware, defectController.getAllDefects);
 
-router.get('/:id', defectController.getDefectById);
+router.get('/:id', authMiddleware, defectController.getDefectById);
 
 router.post('/', defectController.createDefect);
 

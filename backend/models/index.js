@@ -19,11 +19,11 @@ User.belongsTo(Role, { foreignKey: 'role' });
 
 
 Object.hasMany(Defect, { foreignKey: 'object', onDelete: 'CASCADE' });
-Defect.belongsTo(Object, { foreignKey: 'object' });
+Defect.belongsTo(Object, { foreignKey: 'object', as: 'objectInfo' });
 
 
 Status.hasMany(Defect, { foreignKey: 'status', onDelete: 'RESTRICT' });
-Defect.belongsTo(Status, { foreignKey: 'status' });
+Defect.belongsTo(Status, { foreignKey: 'status', as: 'statusInfo' });
 
 User.hasMany(Defect, { foreignKey: 'contractor', onDelete: 'SET NULL' });
 Defect.belongsTo(User, { foreignKey: 'contractor', as: 'engineerInfo'});
