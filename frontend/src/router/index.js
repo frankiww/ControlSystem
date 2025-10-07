@@ -6,6 +6,7 @@ import ObjectsView from '../views/ObjectsView.vue'
 import DefectsView from '../views/DefectsView.vue'
 import ReportsView from '../views/ReportsView.vue'
 import UsersView from '../views/UsersView.vue'
+import ObjectInfoView from '../views/ObjectInfoView.vue'
 
 
 
@@ -39,6 +40,13 @@ const routes = [
         component: UsersView,
         meta: {requiresAuth: true} 
     },
+        {
+        path: '/objects/:id', 
+        name: 'ObjectInfoView',
+        component: ObjectInfoView,
+        meta: {requiresAuth: true} 
+    },
+    
 ]
 
 const router = createRouter({

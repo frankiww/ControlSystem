@@ -55,7 +55,7 @@
             v-for="object in objects"
             :key="object.id"
             :object="object"
-            @click="openObject(object)"
+            @click="openObject(object.id)"
           />
         </tbody>
       </table>
@@ -65,8 +65,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import ObjectRow from '../components/ObjectRow.vue'
+const router = useRouter()
 
 const objects = ref([])
 const clients = ref([])
@@ -108,9 +110,11 @@ function openAddObjectModal() {
   //добавить объект
 }
 
-function openObject(object) {
-  // переход на страницу объекта
-  console.log('Открыт объект:', object)
+function openObject(id) {
+  router.push({
+    name: 'ObjectInfoView', 
+    params: { id: id },
+  })
 }
 
 onMounted(() => {

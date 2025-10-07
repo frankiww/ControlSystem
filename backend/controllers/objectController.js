@@ -67,6 +67,40 @@ exports.getAllObjects = async (req, res) => {
   }
 };
 
+exports.getObjectById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const object = await Object.findByPk(id, {
+      include: [
+        { model: User, as: 'clientInfo', attributes: ['id', 'name'] },
+      ],
+    });
+
+    if (!object) {
+      return res.status(404).json({ message: 'Объект не найден' });
+    }
+
+    const totalDefects = await Defect.count({ where: { object: id } });
+    const activeDefects = await Defect.count({
+      where: { 
+        object: id,
+        status: { [Op.notIn]: [4, 5] },
+      },
+    });
+
+    res.json({
+      ...object.toJSON(),
+      totalDefects,
+      activeDefects,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Ошибка при получении объекта' });
+  }
+};
+
+
 exports.addObject = async (req, res) => {
   try {
     const { name, client, stage } = req.body;

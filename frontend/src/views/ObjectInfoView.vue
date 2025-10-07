@@ -1,0 +1,61 @@
+<template>
+  <div v-if="object">
+    <div class="min-h-screen bg-light text-dark p-6">
+      <h1 class="text-2xl font-bold mb-4 border-b border-dark pb-2">{{ object.name }}</h1>
+
+      <div class="bg-white p-4 rounded shadow mb-6 flex flex-col sm:flex-row justify-between gap-4">
+        <div>Клиент: {{ object.clientInfo?.name }}</div>
+        <div>Активные дефекты: {{ object.activeDefects }}</div>
+        <div>Всего дефектов: {{ object.totalDefects }}</div>
+      </div>
+    </div>
+      <DefectTable :defects="defects" @select-defect="openDefect" />
+    </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import { useRouter, useRoute } from 'vue-router'
+import DefectTable from '../components/DefectTable.vue'
+
+const router = useRouter()
+const route = useRoute()
+const object = ref(null)
+const defects = ref([])
+const error = ref('')
+
+async function fetchObject() {
+  try {
+    const token = localStorage.getItem('token')
+    const response = await axios.get(`http://localhost:3030/api/objects/${route.params.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    object.value = response.data
+  } catch (err) {
+    error.value = 'Ошибка загрузки объекта'
+  }
+}
+
+async function fetchDefects() {
+  try {
+    const token = localStorage.getItem('token')
+    const response = await axios.get('http://localhost:3030/api/defects', {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { object: object.value.id }
+    })
+    defects.value = response.data
+  } catch (err) {
+    console.error('Ошибка загрузки дефектов:', err)
+  }
+}
+
+function openDefect(defect) {
+//   router.push({ name: 'DefectView', params: { defect } })
+}
+
+onMounted(() => {
+  fetchObject()
+  fetchDefects()
+})
+</script>
