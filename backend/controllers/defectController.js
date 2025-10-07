@@ -107,7 +107,7 @@ exports.getDefectById = async (req, res) => {
       name: defect.name,
       description: defect.description,
       priority: defect.priority,
-      engineerName: defect.engineerInfo?.name,
+      engineerInfo: defect.engineerInfo,
       statusName: defect.statusInfo?.name,
       clientInfo: defect.clientInfo,
       deadline: defect.deadline,
