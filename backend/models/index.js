@@ -26,7 +26,7 @@ Status.hasMany(Defect, { foreignKey: 'status', onDelete: 'RESTRICT' });
 Defect.belongsTo(Status, { foreignKey: 'status' });
 
 User.hasMany(Defect, { foreignKey: 'contractor', onDelete: 'SET NULL' });
-Defect.belongsTo(User, { foreignKey: 'contractor' });
+Defect.belongsTo(User, { foreignKey: 'contractor', as: 'engineerInfo'});
 
 Defect.hasMany(Attachment, { foreignKey: 'defect', onDelete: 'CASCADE' });
 Attachment.belongsTo(Defect, { foreignKey: 'defect' });

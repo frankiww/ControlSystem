@@ -1,8 +1,9 @@
 const express = require('express');
 const defectController = require('../controllers/defectController');
 const router = express.Router();
+const { authMiddleware } = require('../middleware/authMiddleware');
 
-router.get('/', defectController.getAllDefects);
+router.get('/', authMiddleware, defectController.getAllDefects);
 
 router.get('/:id', defectController.getDefectById);
 

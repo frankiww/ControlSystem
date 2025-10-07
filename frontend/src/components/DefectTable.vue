@@ -7,6 +7,7 @@
           <th class="py-3 px-4 border-b border-dark">Статус</th>
           <th class="py-3 px-4 border-b border-dark">Исполнитель</th>
           <th class="py-3 px-4 border-b border-dark">Дедлайн</th>
+          <th class="py-3 px-4 border-b border-dark">Приоритет</th>
         </tr>
       </thead>
       <tbody>
@@ -19,7 +20,8 @@
           <td class="py-2 px-4 border-b border-dark">{{ defect.name }}</td>
           <td class="py-2 px-4 border-b border-dark">{{ defect.statusName }}</td>
           <td class="py-2 px-4 border-b border-dark">{{ defect.engineerName || '-' }}</td>
-          <td class="py-2 px-4 border-b border-dark">{{ defect.deadline | formatDate}}</td>
+          <td class="py-2 px-4 border-b border-dark">{{ formatDate(defect.deadline)}}</td>
+          <td class="py-2 px-4 border-b border-dark">{{ defect.priority }}</td>
         </tr>
       </tbody>
     </table>
@@ -35,16 +37,10 @@ const props = defineProps({
     default: () => []
   }
 })
-</script>
 
-<script>
-// Фильтр для форматирования даты
-export default {
-  filters: {
-    formatDate(value) {
-      if (!value) return ''
-      return new Date(value).toLocaleDateString()
-    }
-  }
+const formatDate = (val) => {
+  if (!val) return ''
+  const d = new Date(val)
+  return d.toLocaleDateString()
 }
 </script>

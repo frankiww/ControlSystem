@@ -1,16 +1,65 @@
-const { Defect } = require('../models');
+const { Defect, Status, User, Object } = require('../models');
 
 exports.getAllDefects = async (req, res) => {
   try {
     const { object, status, engineer } = req.query;
+    const requester = req.user;
     const filter = {};
 
     if (object) filter.object = object;
     if (status) filter.status = status;
-    if (engineer) filter.engineer = engineer;
+    if (engineer) filter.contractor = engineer;
 
-    const defects = await Defect.findAll({ where: filter });
-    res.status(200).json(defects);
+    if (requester.role === 'engineer'){
+      filter.contractor = requester.id
+    } else if (requester.role === 'client') {
+      const clientObjects = await Object.findAll({
+        where: {client: requester.id},
+        attributes: ['id'],
+      })
+      const objectIds = clientObjects.map(o => o.id);
+      where.object = objectIds.length ? objectIds : [-1];
+    }
+
+    const defects = await Defect.findAll({ 
+      where: filter,
+include: [
+        {
+          model: Status,
+          attributes: ['name'],
+        },
+        {
+          model: User,
+          as: 'engineerInfo',
+          attributes: ['id', 'name'],
+        },
+        {
+          model: Object,
+          attributes: ['id', 'name'],
+          include: [
+            {
+              model: User,
+              as: 'clientInfo',
+              attributes: ['id', 'name'],
+            },
+          ],
+        },
+      ],
+      order: [['id', 'ASC']],
+    });
+
+    const formattedDefects = defects.map(d => ({
+      id: d.id,
+      name: d.name,
+      statusName: d.Status?.name || '-',
+      engineerName: d.engineerInfo?.name || '-',
+      deadline: d.deadline,
+      objectName: d.Object?.name || '-',
+      clientName: d.Object?.clientInfo?.name || '-',
+      priority: d.priority,
+    }));
+
+    res.status(200).json(formattedDefects);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Ошибка при получении списка дефектов' });

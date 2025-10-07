@@ -8,9 +8,15 @@
         <div>Активные дефекты: {{ object.activeDefects }}</div>
         <div>Всего дефектов: {{ object.totalDefects }}</div>
       </div>
+
+      <div v-if="defects.length > 0">
+        <DefectTable :defects="defects" @select-defect="openDefect" />
+      </div>
+      <div v-else class="text-center text-gray-500 py-4">
+        Нет дефектов для этого объекта
+      </div>
     </div>
-      <DefectTable :defects="defects" @select-defect="openDefect" />
-    </div>
+  </div>
 </template>
 
 <script setup>
@@ -32,6 +38,7 @@ async function fetchObject() {
       headers: { Authorization: `Bearer ${token}` }
     })
     object.value = response.data
+    await fetchDefects()
   } catch (err) {
     error.value = 'Ошибка загрузки объекта'
   }
@@ -45,6 +52,7 @@ async function fetchDefects() {
       params: { object: object.value.id }
     })
     defects.value = response.data
+    console.log(defects.value)
   } catch (err) {
     console.error('Ошибка загрузки дефектов:', err)
   }
@@ -54,8 +62,8 @@ function openDefect(defect) {
 //   router.push({ name: 'DefectView', params: { defect } })
 }
 
-onMounted(() => {
-  fetchObject()
-  fetchDefects()
+onMounted(async () => {
+  await fetchObject()
+  // await fetchDefects()
 })
 </script>
