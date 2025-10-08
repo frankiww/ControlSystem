@@ -12,25 +12,4 @@ const Defect = sequelize.define('Defect', {
     deadline: {type: DataTypes.DATE, allowNull: false},
     status: {type: DataTypes.INTEGER, allowNull: false},
 });
-
-Defect.afterUpdate(async (updatedDefect, options) => {
-    const changes = {};
-    for (const key of Object.keys(updatedDefect._previousDataValues)){
-        if (updatedDefect._previousDataValues[key] !== updatedDefect[key]){
-            changes[key] = {
-                old: updatedDefect._previousDataValues[key],
-                new: updatedDefect[key]
-            };
-        }
-    }
-
-    if (object.keys(changes).length > 0){
-        await History.create({
-            defect: updatedDefect.id,
-            use: options.userId || null,
-            data: changes
-        });
-    }
-});
-
 module.exports = Defect;

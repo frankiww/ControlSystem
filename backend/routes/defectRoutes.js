@@ -7,6 +7,10 @@ router.get('/', authMiddleware, defectController.getAllDefects);
 
 router.get('/:id', authMiddleware, defectController.getDefectById);
 
+router.put('/:id/assign', authMiddleware, defectController.assignEngineer);
+
+router.put('/:id/status', authMiddleware, defectController.updateStatus);
+
 router.post('/', defectController.createDefect);
 
 router.put('/:id', defectController.updateDefect);

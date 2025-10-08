@@ -1,4 +1,4 @@
-const { Defect, Status, User, Object } = require('../models');
+const { Defect, Status, User, Object, History } = require('../models');
 
 exports.getAllDefects = async (req, res) => {
   try {
@@ -130,6 +130,116 @@ exports.createDefect = async (req, res) => {
     res.status(500).json({ error: 'Ошибка при создании дефекта' });
   }
 };
+
+exports.assignEngineer = async (req, res) => {
+  try {
+    const { engineerId } = req.body;
+    const defectId = req.params.id;
+    const managerId = req.user.id;
+
+    if (req.user.role !== 'manager') {
+      return res.status(403).json({ error: 'Недостаточно прав для выполнения действия' });
+
+    }
+
+    const defect = await Defect.findByPk(defectId);
+    if (!defect) return res.status(404).json({ error: 'Дефект не найден' });
+
+    if (defect.engineer) {
+      return res.status(400).json({ error: 'Инженер уже назначен' });
+    }
+
+    const engineer = await User.findByPk(engineerId);
+    if (!engineer || engineer.role !== 2) {
+      return res.status(400).json({ error: 'Некорректный инженер' });
+    }
+
+    const manager = await User.findByPk(managerId);
+    if (!manager || manager.role !== 1) {
+      return res.status(400).json({ error: 'Некорректный менеджер' });
+    }
+
+
+    const workStatus = await Status.findOne({ where: { name: 'В работе' } });
+        if (!workStatus) {
+      return res.status(400).json({ error: 'Статус "В работе" не найден' });
+    }
+    defect.contractor = engineerId;
+    defect.status = workStatus.id;
+    await defect.save();
+
+    await History.create({
+      defect: defect.id,
+      user: managerId,
+      data: {
+        action: 'Назначение инженера',
+        message: `Менеджер ${manager.name} назначил(а) инженера ${engineer.name}`,
+      },
+    });
+
+
+    res.json({ message: 'Инженер успешно назначен', defect });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Ошибка при назначении инженера' });
+  }
+};
+
+exports.updateStatus = async (req, res) => {
+  try {
+    const defectId = req.params.id;
+    const { status } = req.body;
+    const userId = req.user.id;
+
+    const defect = await Defect.findByPk(defectId, {
+      include: [{ model: Status, as: 'statusInfo' }],
+    });
+    if (!defect) return res.status(404).json({ error: 'Дефект не найден' });
+
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ error: 'Пользователь не найден' });
+
+    const newStatus = await Status.findOne({ where: { name: status } });
+    if (!newStatus) return res.status(400).json({ error: 'Некорректный статус' });
+
+    if (user.role === 'engineer') {
+      // инженер может только "В работе" -> "На проверке"
+      if (defect.statusInfo.name !== 'В работе' || newStatus.name !== 'На проверке') {
+        return res.status(403).json({ error: 'Инженер не может изменить статус на этот' });
+      }
+    } else if (user.role === 'manager') {
+      // менеджер может менять только "На проверке" -> "Закрыт"/"Отменен"
+      if (
+        defect.statusInfo.name !== 'На проверке' ||
+        !['Закрыт', 'Отменен'].includes(newStatus.name)
+      ) {
+        return res.status(403).json({ error: 'Менеджер может только принять или отклонить дефект' });
+      }
+    } else {
+      return res.status(403).json({ error: 'Недостаточно прав' });
+    }
+
+    defect.status = newStatus.id;
+    await defect.save();
+
+    await History.create({
+      defect: defect.id,
+      user: user.id,
+      data: {
+        action: 'Изменение статуса',
+        message: `${user.role === 'manager' ? 'Менеджер' : 'Инженер'} ${
+          user.name
+        } изменил статус на "${newStatus.name}"`,
+      },
+    });
+
+    res.json({ message: 'Статус успешно изменён', defect });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Ошибка при изменении статуса дефекта' });
+  }
+};
+
 
 exports.updateDefect = async (req, res) => {
   try {
