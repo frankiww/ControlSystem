@@ -38,12 +38,14 @@ exports.addComment = async (req, res) => {
       text,
     });
 
+    const user = await User.findByPk(userId);
+
     await History.create({
       defect: defectId,
       user: userId,
       data: {
         action: 'Добавление комментария',
-        message: `${req.user.role === 'manager' ? 'Менеджер' : 'Инженер'} ${req.user.name} добавил(а) новый комментарий`,
+        message: `${req.user.role === 'manager' ? 'Менеджер' : 'Инженер'} ${user.name} добавил(а) новый комментарий`,
       },
     });
 

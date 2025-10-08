@@ -3,7 +3,7 @@
     <h2 class="text-xl font-semibold mb-4">Комментарии</h2>
 
     <!-- добавление комментария -->
-    <div class="mb-6">
+    <div v-if="user.role !== 'client'" class="mb-6">
       <textarea
         v-model="newComment"
         placeholder="Напишите комментарий..."
@@ -49,6 +49,7 @@ const comments = ref([])
 const newComment = ref('')
 const loading = ref(true)
 const error = ref('')
+const user = ref({})
 
 function formatDate(dateStr) {
   if (!dateStr) return ''
@@ -92,5 +93,13 @@ async function submitComment() {
   }
 }
 
-onMounted(fetchComments)
+async function getUser(){
+  const savedUser = localStorage.getItem('user')
+  if (savedUser) user.value = JSON.parse(savedUser)
+}
+
+onMounted(() => {
+    fetchComments()
+    getUser()
+})
 </script>

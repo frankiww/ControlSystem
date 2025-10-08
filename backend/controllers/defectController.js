@@ -18,7 +18,7 @@ exports.getAllDefects = async (req, res) => {
         attributes: ['id'],
       })
       const objectIds = clientObjects.map(o => o.id);
-      where.object = objectIds.length ? objectIds : [-1];
+      filter.object = objectIds.length ? objectIds : [-1];
     }
 
     const defects = await Defect.findAll({ 
