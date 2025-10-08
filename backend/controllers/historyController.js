@@ -25,7 +25,6 @@ exports.addHistory = async (req, res) => {
 exports.getHistoryByDefect = async (req, res) => {
   try {
     const { id: defectId } = req.params;
-    console.log(defectId)
 
     const history = await History.findAll({
       where: { defect: defectId },
