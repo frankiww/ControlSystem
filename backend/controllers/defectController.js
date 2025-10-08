@@ -202,12 +202,12 @@ exports.updateStatus = async (req, res) => {
     const newStatus = await Status.findOne({ where: { name: status } });
     if (!newStatus) return res.status(400).json({ error: 'Некорректный статус' });
 
-    if (user.role === 'engineer') {
+    if (user.role === 2) {
       // инженер может только "В работе" -> "На проверке"
       if (defect.statusInfo.name !== 'В работе' || newStatus.name !== 'На проверке') {
         return res.status(403).json({ error: 'Инженер не может изменить статус на этот' });
       }
-    } else if (user.role === 'manager') {
+    } else if (user.role === 1) {
       // менеджер может менять только "На проверке" -> "Закрыт"/"Отменен"
       if (
         defect.statusInfo.name !== 'На проверке' ||
@@ -227,7 +227,7 @@ exports.updateStatus = async (req, res) => {
       user: user.id,
       data: {
         action: 'Изменение статуса',
-        message: `${user.role === 'manager' ? 'Менеджер' : 'Инженер'} ${
+        message: `${user.role === 1 ? 'Менеджер' : 'Инженер'} ${
           user.name
         } изменил статус на "${newStatus.name}"`,
       },

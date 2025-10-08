@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { User, Account, Role, Object } = require('../models');
+const { User, Account, Role, Object, Defect } = require('../models');
 const { Op } = require('sequelize');
 
 exports.getUsers = async (req, res) => {
@@ -25,12 +25,13 @@ exports.getUsers = async (req, res) => {
         include: [
           {
             model: Object,
+            as: 'objectInfo',
             attributes: ['client'],
           }
         ]
       });
 
-      const clientIds = [...new Set(defects.map(d => d.Object.client))];
+      const clientIds = [...new Set(defects.map(d => d.objectInfo.client))];
 
       const users = await User.findAll({
         where: { id: { [Op.in]: clientIds } },
