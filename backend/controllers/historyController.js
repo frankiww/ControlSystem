@@ -21,3 +21,20 @@ exports.addHistory = async (req, res) => {
     res.status(500).json({ error: 'Ошибка при добавлении записи в историю изменений' });
   }
 };
+
+exports.getHistoryByDefect = async (req, res) => {
+  try {
+    const { id: defectId } = req.params;
+    console.log(defectId)
+
+    const history = await History.findAll({
+      where: { defect: defectId },
+      order: [['createdAt', 'DESC']],
+    });
+
+    res.json(history);
+  } catch (error) {
+    console.error('Ошибка при получении истории:', error);
+    res.status(500).json({ message: 'Ошибка при получении истории изменений' });
+  }
+};

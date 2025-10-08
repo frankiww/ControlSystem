@@ -69,6 +69,26 @@
       </template>
     </div>
     <!-- вкладки -->
+     <div class="flex gap-4 border-b border-dark mb-4">
+      <button
+        v-for="tab in tabs"
+        :key="tab"
+        @click="activeTab = tab"
+        :class="[
+          'px-4 py-2 font-medium transition',
+          activeTab === tab
+            ? 'border-b-2 border-medium text-dark'
+            : 'text-gray-500 hover:text-dark'
+        ]"
+      >
+        {{ tab }}
+      </button>
+    </div>
+    <div class="bg-white rounded shadow">
+      <CommentsTab v-if="activeTab === 'Комментарии'" />
+      <AttachmentsTab v-if="activeTab === 'Вложения'" />
+      <HistoryTab v-if="activeTab === 'История изменений'" />
+    </div>
   </div>
 
   <div v-else class="min-h-screen flex items-center justify-center text-gray-500">
@@ -80,6 +100,9 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
+import CommentsTab from '../components/CommentsTab.vue'
+import AttachmentsTab from '../components/AttachmentsTab.vue'
+import HistoryTab from '../components/HistoryTab.vue'
 
 const route = useRoute()
 const defect = ref(null)
@@ -87,6 +110,8 @@ const error = ref('')
 const engineers = ref([])
 const selectedEngineer = ref('')
 const user = ref({})
+const activeTab = ref('Комментарии')
+const tabs = ['Комментарии', 'Вложения', 'История изменений']
 
 async function getUser(){
   const savedUser = localStorage.getItem('user')
