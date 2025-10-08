@@ -1,4 +1,4 @@
-const { Defect, Status, User, Object, History } = require('../models');
+const { Defect, Status, User, Object, History, Role } = require('../models');
 
 exports.getAllDefects = async (req, res) => {
   try {
@@ -122,14 +122,64 @@ exports.getDefectById = async (req, res) => {
 
 exports.createDefect = async (req, res) => {
   try {
-    const defectData = req.body;
-    const defect = await Defect.create(defectData);
-    res.status(201).json(defect);
+    const { name, description, object, priority, deadline, engineer } = req.body;
+    const user = req.user;
+
+    if (user.role !== 'manager') {
+      return res.status(403).json({ error: 'Недостаточно прав для создания дефекта' });
+    }
+
+    if (!name || !description || !object || !priority || !deadline) {
+      return res.status(400).json({ error: 'Не все обязательные поля заполнены' });
+    }
+
+    const foundObject = await Object.findByPk(object);
+    if (!foundObject) {
+      return res.status(400).json({ error: 'Объект не найден' });
+    }
+
+    let engineerUser = null;
+    if (engineer) {
+      engineerUser = await User.findByPk(engineer, { include: Role });
+      if (!engineerUser || engineerUser.Role.name !== 'engineer') {
+        return res.status(400).json({ error: 'Некорректный инженер' });
+      }
+    }
+
+    const statusName = engineer ? 'В работе' : 'Новый';
+    const status = await Status.findOne({ where: { name: statusName } });
+    if (!status) {
+      return res.status(500).json({ error: `Статус "${statusName}" не найден` });
+    }
+
+    const defect = await Defect.create({
+      name,
+      description,
+      object,
+      priority,
+      deadline,
+      contractor: engineer || null,
+      status: status.id,
+    });
+
+    await History.create({
+      defect: defect.id,
+      user: user.id,
+      data: {
+        action: 'Создание дефекта',
+        message: engineer
+          ? `Менеджер ${user.name} создал дефект и назначил инженера ${engineerUser.name}`
+          : `Менеджер ${user.name} создал дефект`,
+      },
+    });
+
+    res.status(201).json({ message: 'Дефект успешно создан', defect });
   } catch (error) {
-    console.error(error);
+    console.error('Ошибка при создании дефекта:', error);
     res.status(500).json({ error: 'Ошибка при создании дефекта' });
   }
 };
+
 
 exports.assignEngineer = async (req, res) => {
   try {

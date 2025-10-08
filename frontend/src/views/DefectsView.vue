@@ -47,6 +47,14 @@
     </div>
 
     <DefectTable :defects="defects" @select-defect="openDefect" />
+    <AddDefectModal
+    v-if="showAddModal"
+    :is-open="showAddModal"
+    :objects="objects"
+    :engineers="engineers"
+    @close="closeAddDefectModal"
+    @created="handleDefectCreated"
+    />
   </div>
 </template>
 
@@ -55,13 +63,16 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import DefectTable from '../components/DefectTable.vue'
-const router = useRouter()
+import AddDefectModal from '../components/AddDefectModal.vue'
 
+const router = useRouter()
 const defects = ref([])
 const statuses = ref([])
 const objects = ref([])
+const engineers = ref([])
 const selectedStatus = ref('')
 const selectedObject = ref('')
+const showAddModal = ref(false)
 
 const user = JSON.parse(localStorage.getItem('user'))
 const userRole = user?.role || ''
@@ -106,17 +117,39 @@ async function fetchObjects() {
   }
 }
 
+async function fetchEngineers() {
+  try {
+    const token = localStorage.getItem('token')
+    const res = await axios.get('http://localhost:3030/api/users?role=engineer', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    engineers.value = res.data
+  } catch (err) {
+    console.error('Ошибка загрузки объектов:', err)
+  }
+}
+
 function openDefect(id) {
   router.push({ name: 'DefectInfoView', params: { id } })
 }
 
 function openAddDefectModal() {
-  //добавить дефект
+  showAddModal.value = true
+}
+
+function closeAddDefectModal() {
+  showAddModal.value = false
+}
+
+async function handleDefectCreated() {
+  await fetchDefects()
+  closeAddDefectModal()
 }
 
 onMounted(() => {
   fetchDefects()
   fetchStatuses()
   fetchObjects()
+  fetchEngineers()
 })
 </script>
