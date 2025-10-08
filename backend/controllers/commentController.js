@@ -1,35 +1,52 @@
-//добавить комментарий
-//получить все комменты
-//удалить коммент
+const {Comment, User, History} = require('../models');
 
-const {Comment} = require('../models');
+exports.getCommentsByDefect = async (req, res) => {
+  try {
+    const { defectId } = req.params;
 
-exports.getAllComments = async(req, res) => {
-    try{
-        const {defect} = req.query;
-        const filter ={};
-        if (defect) filter.defect = defect
+    const comments = await Comment.findAll({
+      where: { defect: defectId },
+      include: [
+        { model: User, attributes: ['id', 'name', 'role'], as: 'User' },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
 
-        const comments = await Comment.findAll(
-            {where: filter}
-        );
-        res.status(200).json(comments);
-
-    } catch(error){
-        console.error(error);
-        res.status(500).json({error: 'Ошибка при получении комментариев'});
-    }
+    res.json(comments);
+  } catch (error) {
+    console.error('Ошибка при получении комментариев:', error);
+    res.status(500).json({ message: 'Ошибка при получении комментариев' });
+  }
 };
 
 exports.addComment = async (req, res) => {
   try {
-    const { defect, user } = req.body;
+    const userId = req.user.id;
+    const { defectId, text } = req.body;
 
-    if (!defect || !user) {
-      return res.status(400).json({ error: 'Не указаны обязательные поля: defect или user' });
+    if (!text) {
+      return res.status(400).json({ message: 'Текст комментария обязателен' });
     }
 
-    const comment = await Comment.create({ defect, user });
+    if (req.user.role === 'client'){
+      return res.status(400).json({message: 'Не достаточно прав'});
+    }
+
+    const comment = await Comment.create({
+      defect: defectId,
+      user: userId,
+      text,
+    });
+
+    await History.create({
+      defect: defectId,
+      user: userId,
+      data: {
+        action: 'Добавление комментария',
+        message: `${req.user.role === 'manager' ? 'Менеджер' : 'Инженер'} ${req.user.name} добавил(а) новый комментарий`,
+      },
+    });
+
     res.status(201).json(comment);
   } catch (error) {
     console.error(error);

@@ -35,7 +35,7 @@ Defect.hasMany(Comment, { foreignKey: 'defect', onDelete: 'CASCADE' });
 Comment.belongsTo(Defect, { foreignKey: 'defect' });
 
 User.hasMany(Comment, { foreignKey: 'user', onDelete: 'CASCADE' });
-Comment.belongsTo(User, { foreignKey: 'user' });
+Comment.belongsTo(User, { foreignKey: 'user', as: 'User' });
 
 Defect.hasMany(History, { foreignKey: 'defect', onDelete: 'CASCADE' });
 History.belongsTo(Defect, { foreignKey: 'defect' });
