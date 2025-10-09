@@ -162,14 +162,16 @@ exports.createDefect = async (req, res) => {
       status: status.id,
     });
 
+    const manager = await User.findByPk(user.id);
+
     await History.create({
       defect: defect.id,
       user: user.id,
       data: {
         action: 'Создание дефекта',
         message: engineer
-          ? `Менеджер ${user.name} создал дефект и назначил инженера ${engineerUser.name}`
-          : `Менеджер ${user.name} создал дефект`,
+          ? `Менеджер ${manager.name} создал(а) дефект и назначил инженера ${engineerUser.name}`
+          : `Менеджер ${manager.name} создал(а) дефект`,
       },
     });
 
@@ -279,7 +281,7 @@ exports.updateStatus = async (req, res) => {
         action: 'Изменение статуса',
         message: `${user.role === 1 ? 'Менеджер' : 'Инженер'} ${
           user.name
-        } изменил статус на "${newStatus.name}"`,
+        } изменил(а) статус на "${newStatus.name}"`,
       },
     });
 
