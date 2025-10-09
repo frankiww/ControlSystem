@@ -24,6 +24,10 @@ exports.login = async (req, res) => {
       return res.status(404).json({ error: "Пользователь не найден" });
     }
 
+    if (!user.active) {
+      return res.status(404).json({ error: "Пользователь деактивирован" });
+    }
+
     //генерация JWT-токена
     const token = jwt.sign(
       { id: user.id, role: user.Role.name },

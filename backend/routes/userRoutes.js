@@ -5,8 +5,8 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 
 router.get('/', authMiddleware, userController.getUsers);
 
-router.post('/', userController.addUser);
+router.post('/', authMiddleware, userController.addUser);
 
-router.patch('/:id/deactivate', userController.deactivateUser);
+router.put('/:id/deactivate', authMiddleware, userController.deactivateUser);
 
 module.exports = router;
