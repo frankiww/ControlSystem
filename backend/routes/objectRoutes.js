@@ -7,6 +7,6 @@ router.get('/', authMiddleware, objectController.getAllObjects);
 
 router.get('/:id', authMiddleware, objectController.getObjectById);
 
-router.post('/', objectController.addObject);
+router.post('/', authMiddleware, objectController.createObject);
 
 module.exports = router;

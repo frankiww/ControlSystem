@@ -101,23 +101,33 @@ exports.getObjectById = async (req, res) => {
 };
 
 
-exports.addObject = async (req, res) => {
+exports.createObject = async (req, res) => {
   try {
-    const { name, client, stage } = req.body;
+    const { name, client } = req.body;
+    const user = req.user;
 
-    if (!name || !client) {
-      return res.status(400).json({ error: 'Необходимо указать name и client' });
+    if (user.role !== 'manager') {
+      return res.status(403).json({ error: 'Недостаточно прав для создания объекта' });
     }
 
-    const newObject = await Object.create({
+    if (!name || !client) {
+      return res.status(400).json({ error: 'Не все обязательные поля заполнены' });
+    }
+
+    const foundClient = await User.findByPk(client);
+    if (!foundClient) {
+      return res.status(400).json({ error: 'Клиент не найден' });
+    }
+
+    const object = await Object.create({
       name,
-      client,
-      stage: stage ?? 0
+      client
     });
 
-    res.status(201).json(newObject);
+    res.status(201).json({ message: 'Объект успешно создан', object });
   } catch (error) {
-    console.error(error);
+    console.error('Ошибка при создании объекта:', error);
     res.status(500).json({ error: 'Ошибка при создании объекта' });
   }
 };
+

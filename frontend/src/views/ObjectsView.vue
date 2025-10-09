@@ -60,6 +60,13 @@
         </tbody>
       </table>
     </div>
+    <AddObjectModal
+    v-if="showAddModal"
+    :is-open="showAddModal"
+    :clients="clients"
+    @close="closeAddObjectModal"
+    @created="handleObjectCreated"
+    />
   </div>
 </template>
 
@@ -68,12 +75,16 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import ObjectRow from '../components/ObjectRow.vue'
+import AddObjectModal from '../components/AddObjectModal.vue'
+
+
 const router = useRouter()
 
 const objects = ref([])
 const clients = ref([])
 const selectedClient = ref('')
 const onlyWithDefects = ref(false)
+const showAddModal = ref(false)
 
 const user = JSON.parse(localStorage.getItem('user'))
 const userRole = user?.role || ''
@@ -107,7 +118,16 @@ async function fetchClients() {
 }
 
 function openAddObjectModal() {
-  //добавить объект
+  showAddModal.value = true
+}
+
+function closeAddObjectModal() {
+  showAddModal.value = false
+}
+
+async function handleObjectCreated() {
+  await fetchObjects()
+  closeAddObjectModal()
 }
 
 function openObject(id) {
