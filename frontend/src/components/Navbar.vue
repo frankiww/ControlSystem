@@ -3,7 +3,7 @@
     <div class="flex space-x-4">
       <router-link to="/objects" class="hover:bg-dark hover:text-light px-6 py-4">Объекты</router-link>
       <router-link to="/defects" class="hover:bg-dark hover:text-light px-6 py-4">Дефекты</router-link>
-      <router-link to="/reports" class="hover:bg-dark hover:text-light px-6 py-4">Отчеты</router-link>
+      <router-link v-if="user.role !== 'engineer'" to="/reports" class="hover:bg-dark hover:text-light px-6 py-4">Отчеты</router-link>
       <router-link
         v-if="user.role === 'manager'"
         to="/users"

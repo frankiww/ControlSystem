@@ -60,7 +60,7 @@
         <tr
           v-for="user in users"
           :key="user.id"
-          class="border-t hover:bg-gray-50 transition"
+          class="border-t hover:bg-light transition transition"
         >
           <td class="py-2 px-4">{{ user.name }}</td>
           <td class="py-2 px-4">{{ user.Role?.name || '—' }}</td>

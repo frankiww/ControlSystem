@@ -3,7 +3,7 @@
     <div v-if="loading" class="text-gray-500 text-center py-8">Загрузка отчетов...</div>
 
     <table v-else class="min-w-full border border-gray-200 rounded-xl overflow-hidden">
-      <thead class="bg-gray-50">
+      <thead class="bg-medium">
         <tr class="text-left text-gray-600">
           <th class="px-4 py-2">Название</th>
           <th class="px-4 py-2">Менеджер</th>
@@ -18,21 +18,21 @@
         <tr
           v-for="report in reports"
           :key="report.id"
-          class="border-t hover:bg-gray-50 transition"
+          class="border-t bg-white hover:bg-light transition"
         >
-          <td class="px-4 py-2 font-medium">{{ report.name }}</td>
-          <td class="px-4 py-2">{{ report.manager.name }}</td>
-          <td class="px-4 py-2">
+          <td class="px-4 py-2 font-medium border-b border-dark/20" >{{ report.name }}</td>
+          <td class="px-4 py-2 border-b border-dark/20">{{ report.manager.name }}</td>
+          <td class="px-4 py-2 border-b border-dark/20">
             {{ report.recipient?.name || 'Внутренний отчёт' }}
           </td>
-          <td class="px-4 py-2">{{ report.objectName || '-'}}</td>
-          <td v-if="report.filter?.period?.from&&report.filter?.period?.to" class="px-4 py-2 text-gray-500">
+          <td class="px-4 py-2 border-b border-dark/20">{{ report.objectName || '-'}}</td>
+          <td v-if="report.filter?.period?.from&&report.filter?.period?.to" class="px-4 py-2 border-b border-dark/20">
             {{ formatDate(report.filter.period.from) }} - {{ formatDate(report.filter.period.to) }}
           </td>
-          <td v-else class="px-4 py-2 text-gray-500">
+          <td v-else class="px-4 py-2 border-b border-dark/20">
             За все время
           </td>
-          <td class="px-4 py-2 text-center space-x-2">
+          <td class="px-4 py-2 text-center space-x-2 border-b border-dark/20">
             <button
               class="px-3 py-1 bg-medium text-light rounded hover:bg-dark transition"
               @click="$emit('open', report)"

@@ -18,12 +18,12 @@
           class="hover:bg-light cursor-pointer"
           @click="$emit('select-defect', defect.id)"
         >
-          <td class="py-2 px-4 border-b border-dark">{{ defect.name }}</td>
-          <td class="py-2 px-4 border-b border-dark">{{ defect.statusName }}</td>
-          <td class="py-2 px-4 border-b border-dark">{{ defect.engineerName || '-' }}</td>
-          <td class="py-2 px-4 border-b border-dark">{{ defect.objectName || '-' }}</td>
-          <td class="py-2 px-4 border-b border-dark">{{ formatDate(defect.deadline)}}</td>
-          <td class="py-2 px-4 border-b border-dark">{{ defect.priority }}</td>
+          <td class="py-2 px-4 border-b border-dark/20">{{ defect.name }}</td>
+          <td class="py-2 px-4 border-b border-dark/20">{{ defect.statusName }}</td>
+          <td class="py-2 px-4 border-b border-dark/20">{{ defect.engineerName || '-' }}</td>
+          <td class="py-2 px-4 border-b border-dark/20">{{ defect.objectName || '-' }}</td>
+          <td class="py-2 px-4 border-b border-dark/20">{{ formatDate(defect.deadline)}}</td>
+          <td class="py-2 px-4 border-b border-dark/20">{{ defect.priority }}</td>
         </tr>
       </tbody>
     </table>
