@@ -47,7 +47,8 @@ User.hasMany(History, { foreignKey: 'user', onDelete: 'SET NULL' });
 History.belongsTo(User, { foreignKey: 'user' });
 
 User.hasMany(Report, { foreignKey: 'user', onDelete: 'CASCADE' });
-Report.belongsTo(User, { foreignKey: 'user' });
+Report.belongsTo(User, { foreignKey: 'user', as: 'manager' });
+Report.belongsTo(User, { foreignKey: 'client', as: 'recipient' });
 
 User.hasMany(Object, { foreignKey: 'client', onDelete: 'RESTRICT' });
 Object.belongsTo(User, { foreignKey: 'client', as: 'clientInfo' });

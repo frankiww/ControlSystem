@@ -12,7 +12,7 @@
       />
       <button
         @click="addAttachment"
-        class="mt-2 px-4 py-2 bg-medium text-dark rounded hover:bg-dark hover:text-ligh"
+        class="mt-2 px-4 py-2 bg-medium text-dark rounded hover:bg-dark hover:text-light"
       >
         Добавить
       </button>
