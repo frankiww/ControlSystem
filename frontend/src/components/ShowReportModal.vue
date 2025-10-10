@@ -55,24 +55,11 @@
           </tbody>
         </table>
 
-        <!-- <div class="w-full h-64 flex justify-center items-center">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                :data="chartData"
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius="80%"
-                fill="#8884d8"
-                label
-              />
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div> -->
+      <div class="w-full flex justify-center mt-6">
+          <div class="w-full flex justify-center mt-6">
+          <Pie :data="chartData" :options="chartOptions" />
+          </div>
+      </div>
       </div>
 
       <div class="flex justify-end mt-6">
@@ -88,8 +75,15 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-// import { PieChart, Pie, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { Pie } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from 'chart.js'
+
+ChartJS.register(ArcElement, Tooltip, Legend)
 
 const props = defineProps({
   report: { type: Object, required: true },
@@ -100,10 +94,29 @@ const formatDate = (date) => {
   return new Date(date).toLocaleDateString('ru-RU')
 }
 
-// const chartData = computed(() =>
-//   Object.entries(props.report.data || {}).map(([status, count]) => ({
-//     name: status,
-//     value: count,
-//   }))
-// )
+const chartData = {
+  labels: props.report.data.map(item => item.status),
+  datasets: [
+    {
+      label: 'Количество дефектов',
+      data: props.report.data.map(item => item.count),
+      backgroundColor: [
+        '#3b82f6',
+        '#10b981',
+        '#f59e0b',
+        '#ef4444',
+        '#8b5cf6',
+        '#14b8a6',
+      ],
+      borderWidth: 1,
+    },
+  ],
+}
+
+const chartOptions = {
+  responsive: true,
+  plugins: {
+    legend: { position: 'bottom' },
+  },
+}
 </script>

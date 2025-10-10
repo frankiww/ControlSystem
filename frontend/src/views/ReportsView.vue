@@ -64,7 +64,6 @@ async function fetchReports() {
 }
 
 function openReport(report) {
-  console.log(report)
   selectedReport.value = report
 }
 
