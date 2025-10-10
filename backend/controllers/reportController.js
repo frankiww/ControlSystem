@@ -39,17 +39,13 @@ exports.createReport = async (req, res) => {
       include: [{model: Status, as: 'statusInfo', attributes: ['name']}],
     });
 
-    const statusCount = {};
-    for (const defect of defects) {
-      const statusName = defect.Status?.name || '-';
-      statusCount[statusName] = (statusCount[statusName] || 0) + 1;
-    }
+    const statuses = await Status.findAll({ attributes: ['name'], order: [['id', 'ASC']] });
 
-    const data = {
-      statuses: statusCount,
-      total: defects.length,
-    }
-
+    const data = statuses.map(status => {
+      const count = defects.filter(def => def.statusInfo?.name === status.name).length;
+      return { status: status.name, count };
+    });
+    
     const report = await Report.create({
       name,
       user: requester.id,

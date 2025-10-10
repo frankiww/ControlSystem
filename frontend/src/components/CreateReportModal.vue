@@ -88,7 +88,7 @@
 
 <script setup>
 import { ref, watch, onMounted} from "vue";
-import axios from "axios";
+import axios, { all } from "axios";
 
 const emit = defineEmits(["close", "created"]);
 

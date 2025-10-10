@@ -26,7 +26,7 @@
             {{ report.recipient?.name || 'Внутренний отчёт' }}
           </td>
           <td class="px-4 py-2">{{ report.objectName || '-'}}</td>
-          <td v-if="report.filter?.period" class="px-4 py-2 text-gray-500">
+          <td v-if="report.filter?.period?.from&&report.filter?.period?.to" class="px-4 py-2 text-gray-500">
             {{ formatDate(report.filter.period.from) }} - {{ formatDate(report.filter.period.to) }}
           </td>
           <td v-else class="px-4 py-2 text-gray-500">

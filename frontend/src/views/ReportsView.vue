@@ -35,11 +35,11 @@
       @created="handleCreate"
     />
 
-    <!-- <ReportViewer
+    <ShowReportModal
       v-if="selectedReport"
       :report="selectedReport"
       @close="selectedReport = null"
-    /> -->
+    />
   </div>
 </template>
 
@@ -47,7 +47,7 @@
 import { ref, onMounted } from 'vue'
 import ReportsList from '../components/ReportsList.vue'
 import CreateReportModal from '../components/CreateReportModal.vue'
-// import ReportViewer from '@/components/reports/ReportViewer.vue'
+import ShowReportModal from '../components/ShowReportModal.vue'
 import axios from 'axios'
 
 const activeTab = ref('list')
@@ -64,6 +64,7 @@ async function fetchReports() {
 }
 
 function openReport(report) {
+  console.log(report)
   selectedReport.value = report
 }
 
